@@ -1,7 +1,7 @@
 {
   "name": "nvsurl",
   "version": "1.0.0",
-  "description": "URL Shortener with GitHub Gist Backend",
+  "description": "URL Shortener",
   "main": "index.js",
   "type": "module",
   "scripts": {
