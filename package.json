@@ -1,0 +1,23 @@
+{
+  "name": "nvsurl",
+  "version": "1.0.0",
+  "description": "URL Shortener with GitHub Gist Backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "nanoid": "^5.1.6"
+  }
+}

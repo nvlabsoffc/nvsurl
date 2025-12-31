@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVSURL - URL Shortener</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #667eea;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            opacity: 0.8;
+        }
+        
+        /* Additional styles for index page */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .endpoint-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .endpoint-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            color: white;
+        }
+        
+        .method.get { background: var(--secondary); }
+        .method.post { background: var(--primary); }
+        .method.delete { background: var(--danger); }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            color: var(--dark);
+        }
+        
+        small {
+            color: var(--gray);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔗 NVSURL - URL Shortener</h1>
+            <!-- ... di bagian setelah header ... -->
+
+<p style="color: var(--gray); margin-bottom: 30px;">Free URL shortening service powered by GitHub Gist</p>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="message error">
+        <%= error %>
+    </div>
+<% } %>
+
+<% if (typeof locals.success !== 'undefined' && locals.success) { %>
+    <div class="message success">
+        ✅ <%= locals.success %>
+    </div>
+<% } %>
+
+<!-- ... sisanya tetap ... -->           
+            <form id="shortenForm">
+                <div class="form-group">
+                    <label for="originalUrl">Original URL *</label>
+                    <input type="url" id="originalUrl" name="originalUrl" 
+                           placeholder="https://example.com/very-long-url-path" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customSlug">Custom Slug (optional)</label>
+                    <input type="text" id="customSlug" name="customSlug" 
+                           placeholder="my-custom-link">
+                    <small>Leave empty for auto-generated slug</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title">Title (optional)</label>
+                    <input type="text" id="title" name="title" 
+                           placeholder="My Awesome Link">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description (optional)</label>
+                    <textarea id="description" name="description" rows="3"
+                              placeholder="Description of this link"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">✨ Create Short URL</button>
+            </form>
+            
+            <div id="result" style="margin-top: 30px; display: none;">
+                <div class="message success">
+                    <h3>✅ Short URL Created!</h3>
+                    <p id="shortUrlDisplay" style="word-break: break-all; margin: 10px 0;"></p>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button id="copyBtn" class="btn" style="background: var(--secondary); color: white;">📋 Copy URL</button>
+                        <a id="testBtn" target="_blank" class="btn btn-primary">🔗 Test URL</a>
+                        <a id="deleteBtn" class="btn btn-danger">🗑️ Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <% if (stats) { %>
+        <div class="card">
+            <h2>📊 Live Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value"><%= stats.totalLinks || 0 %></div>
+                    <div>Total Links</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><%= stats.totalClicks || 0 %></div>
+                    <div>Total Clicks</div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        
+        <div class="card">
+            <h2>🛠️ API Endpoints</h2>
+            <div class="endpoint-list">
+                <div class="endpoint-item">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span class="method post">POST</span>
+                        <code>/shorten</code>
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9rem;">Create a short URL</div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span class="method get">GET</span>
+                        <code>/r/:slug</code>
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9rem;">Redirect to original URL</div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span class="method get">GET</span>
+                        <code>/stats</code>
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9rem;">Global statistics (JSON)</div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span class="method get">GET</span>
+                        <code>/delete.html?slug=:slug</code>
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9rem;">Delete a short URL</div>
+                </div>
+                
+                <div class="endpoint-item">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span class="method get">GET</span>
+                        <code>/health</code>
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9rem;">Server health check</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by GitHub Gist • Rate Limit: <%= process.env.MAX_REQUESTS_PER_HOUR || 35 %> requests/hour</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                ⚠️ Anyone can delete any short URL. Use responsibly.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+            
+            // Hide any previous result
+            document.getElementById('result').style.display = 'none';
+            
+            try {
+                const formData = new FormData(form);
+                const data = {
+                    originalUrl: formData.get('originalUrl'),
+                    customSlug: formData.get('customSlug') || undefined,
+                    title: formData.get('title') || undefined,
+                    description: formData.get('description') || undefined
+                };
+                
+                const response = await fetch('/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success result
+                    const shortUrl = result.data.shortUrl;
+                    const slug = result.data.slug;
+                    
+                    document.getElementById('shortUrlDisplay').textContent = shortUrl;
+                    document.getElementById('testBtn').href = shortUrl;
+                    document.getElementById('deleteBtn').href = `/delete.html?slug=${slug}`;
+                    
+                    document.getElementById('result').style.display = 'block';
+                    
+                    // Clear form
+                    form.reset();
+                    
+                    // Reload page to update stats after 2 seconds
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    
+                } else {
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Network error. Please try again.');
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        });
+        
+        // Copy URL functionality
+        document.getElementById('copyBtn')?.addEventListener('click', function() {
+            const url = document.getElementById('shortUrlDisplay').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                this.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    this.textContent = '📋 Copy URL';
+                }, 2000);
+            });
+        });
+        
+        // Check for URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorParam = urlParams.get('error');
+        
+        if (errorParam) {
+            let errorMessage = 'An error occurred';
+            
+            switch (errorParam) {
+                case 'link-not-found':
+                    errorMessage = 'The requested short URL was not found';
+                    break;
+                case 'server-error':
+                    errorMessage = 'Server error occurred';
+                    break;
+            }
+            
+            alert(`❌ ${errorMessage}`);
+            
+            // Clear the error parameter from URL
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    </script>
+</body>
+</html>

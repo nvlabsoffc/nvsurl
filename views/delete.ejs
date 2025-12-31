@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Delete URL - NVSURL' %></title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #667eea;
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-gray {
+            background: var(--gray);
+            color: white;
+        }
+        
+        .btn-gray:hover {
+            background: #4b5563;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .link-info {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            color: var(--gray);
+            word-break: break-all;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .confirmation {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .confirmation label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Hide elements initially */
+        #formSection, #confirmSection, #resultSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🗑️ Delete Short URL</h1>
+            
+            <!-- Form untuk input slug -->
+            <div id="formSection">
+                <p>Enter the slug of the URL you want to delete:</p>
+                
+                <form id="slugForm">
+                    <input type="text" id="slugInput" placeholder="example" required>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-danger" style="flex: 1;">🔍 Lookup URL</button>
+                        <a href="/" class="btn btn-gray">← Cancel</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Konfirmasi delete -->
+            <div id="confirmSection">
+                <div class="link-info">
+                    <h3>Link Information</h3>
+                    <div class="info-row">
+                        <div class="info-label">Short URL:</div>
+                        <div class="info-value" id="shortUrlDisplay" style="color: var(--primary); font-weight: 500;"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Original URL:</div>
+                        <div class="info-value" id="originalUrlDisplay"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Created:</div>
+                        <div class="info-value" id="createdAtDisplay"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Total Clicks:</div>
+                        <div class="info-value" id="clickCountDisplay"></div>
+                    </div>
+                </div>
+                
+                <div class="message warning">
+                    <h3>⚠️ Warning</h3>
+                    <p>This action cannot be undone! The link will be permanently deleted.</p>
+                </div>
+                
+                <form id="deleteForm">
+                    <div class="confirmation">
+                        <label>
+                            <input type="checkbox" id="confirmCheckbox" required>
+                            <span>I understand this action is permanent and cannot be reversed</span>
+                        </label>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-danger" id="deleteBtn" style="flex: 2;" disabled>
+                            🗑️ Delete Permanently
+                        </button>
+                        <button type="button" id="backBtn" class="btn btn-gray">← Back</button>
+                        <a href="/" class="btn btn-gray">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Hasil delete -->
+            <div id="resultSection">
+                <div class="message" id="resultMessage"></div>
+                <div class="button-group">
+                    <a href="/" class="btn btn-primary" style="flex: 1;">← Back to Home</a>
+                    <button type="button" id="deleteAnotherBtn" class="btn btn-gray">Delete Another</button>
+                </div>
+            </div>
+            
+            <div class="footer">
+                NVSURL URL Shortener • <span id="currentYear"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set current year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // State variables
+        let currentSlug = '';
+        const appDomain = '<%= typeof domain !== "undefined" ? domain : window.location.origin %>';
+        
+        // DOM Elements
+        const formSection = document.getElementById('formSection');
+        const confirmSection = document.getElementById('confirmSection');
+        const resultSection = document.getElementById('resultSection');
+        const slugForm = document.getElementById('slugForm');
+        const deleteForm = document.getElementById('deleteForm');
+        const slugInput = document.getElementById('slugInput');
+        const confirmCheckbox = document.getElementById('confirmCheckbox');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const backBtn = document.getElementById('backBtn');
+        const resultMessage = document.getElementById('resultMessage');
+        const deleteAnotherBtn = document.getElementById('deleteAnotherBtn');
+        
+        // Display elements
+        const shortUrlDisplay = document.getElementById('shortUrlDisplay');
+        const originalUrlDisplay = document.getElementById('originalUrlDisplay');
+        const createdAtDisplay = document.getElementById('createdAtDisplay');
+        const clickCountDisplay = document.getElementById('clickCountDisplay');
+        
+        // Check URL for slug parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const slugFromUrl = urlParams.get('slug');
+        
+        // Initialize page
+        function initPage() {
+            if (slugFromUrl) {
+                // If slug is in URL, lookup immediately
+                slugInput.value = slugFromUrl;
+                lookupSlug(slugFromUrl);
+            } else {
+                // Show form to input slug
+                showFormSection();
+            }
+        }
+        
+        // Show form section
+        function showFormSection() {
+            formSection.style.display = 'block';
+            confirmSection.style.display = 'none';
+            resultSection.style.display = 'none';
+            slugInput.focus();
+        }
+        
+        // Show confirmation section
+        function showConfirmSection() {
+            formSection.style.display = 'none';
+            confirmSection.style.display = 'block';
+            resultSection.style.display = 'none';
+        }
+        
+        // Show result section
+        function showResultSection() {
+            formSection.style.display = 'none';
+            confirmSection.style.display = 'none';
+            resultSection.style.display = 'block';
+        }
+        
+        // Lookup slug
+        async function lookupSlug(slug) {
+            currentSlug = slug;
+            
+            try {
+                const response = await fetch(`/stats/${slug}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const link = result.data;
+                    
+                    // Update display
+                    shortUrlDisplay.textContent = `${appDomain}/r/${slug}`;
+                    originalUrlDisplay.textContent = link.originalUrl;
+                    createdAtDisplay.textContent = new Date(link.createdAt).toLocaleString();
+                    clickCountDisplay.textContent = link.clicks || 0;
+                    
+                    showConfirmSection();
+                    
+                } else {
+                    showResultMessage(`❌ Link not found: /r/${slug}`, 'error');
+                    showResultSection();
+                }
+                
+            } catch (error) {
+                console.error('Lookup error:', error);
+                showResultMessage('❌ Error looking up URL. Please check the slug.', 'error');
+                showResultSection();
+            }
+        }
+        
+        // Delete slug
+        async function deleteSlug() {
+            if (!currentSlug) return;
+            
+            try {
+                const response = await fetch(`/delete.html?slug=${currentSlug}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showResultMessage(
+                            `✅ Successfully deleted /r/${currentSlug}<br>` +
+                            `<small>Original URL: ${result.data.originalUrl}</small>`,
+                            'success'
+                        );
+                    } else {
+                        showResultMessage(`❌ Error: ${result.message}`, 'error');
+                    }
+                } else {
+                    // Handle HTML response (when using form submission)
+                    showResultMessage('✅ Link deleted successfully!', 'success');
+                }
+                
+                showResultSection();
+                
+            } catch (error) {
+                console.error('Delete error:', error);
+                showResultMessage('❌ Network error. Please try again.', 'error');
+                showResultSection();
+            }
+        }
+        
+        // Show result message
+        function showResultMessage(message, type = 'info') {
+            resultMessage.className = `message ${type}`;
+            resultMessage.innerHTML = message;
+        }
+        
+        // Event Listeners
+        
+        // Form submission for slug lookup
+        slugForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const slug = slugInput.value.trim();
+            if (slug) {
+                lookupSlug(slug);
+            }
+        });
+        
+        // Enable/disable delete button based on checkbox
+        confirmCheckbox.addEventListener('change', function() {
+            deleteBtn.disabled = !this.checked;
+        });
+        
+        // Back button
+        backBtn.addEventListener('click', () => {
+            showFormSection();
+        });
+        
+        // Delete another button
+        deleteAnotherBtn.addEventListener('click', () => {
+            currentSlug = '';
+            slugInput.value = '';
+            showFormSection();
+        });
+        
+        // Delete form submission
+        deleteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!confirm(`Are you absolutely sure you want to delete "/r/${currentSlug}"?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
+            
+            await deleteSlug();
+            
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = '🗑️ Delete Permanently';
+            confirmCheckbox.checked = false;
+        });
+        
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Server Error - NVSURL</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #667eea;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--danger);
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 rgba(239, 68, 68, 0.1);
+        }
+        
+        .error-title {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .error-message {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .error-details {
+            background: #fef2f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid var(--danger);
+            text-align: left;
+        }
+        
+        .error-details pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #991b1b;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        .status-info {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .status-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .status-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .health-check {
+            margin-top: 25px;
+            padding: 15px;
+            background: #d1fae5;
+            border-radius: 10px;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .health-check a {
+            color: #065f46;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 6rem;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .status-info {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .status-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="error-code">500</div>
+            <h1 class="error-title">Server Error</h1>
+            
+            <p class="error-message">
+                Something went wrong on our server. Our team has been notified.
+            </p>
+            
+            <% if (error && NODE_ENV === 'development') { %>
+            <div class="error-details">
+                <pre><%= typeof error === 'string' ? error : error.message %></pre>
+            </div>
+            <% } %>
+            
+            <div class="buttons">
+                <a href="/" class="btn btn-primary">
+                    <span>🏠</span> Go Home
+                </a>
+                <a href="javascript:location.reload()" class="btn btn-secondary">
+                    <span>↻</span> Try Again
+                </a>
+                <a href="/health" class="btn btn-danger">
+                    <span>🏥</span> Health Check
+                </a>
+            </div>
+            
+            <div class="health-check">
+                Check if the service is running properly: 
+                <a href="/health" target="_blank">/health</a>
+            </div>
+            
+            <div class="status-info">
+                <div class="status-item">
+                    <div class="status-value" id="uptime">0h 0m</div>
+                    <div class="status-label">Uptime</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="timestamp"><%= new Date().toLocaleTimeString() %></div>
+                    <div class="status-label">Current Time</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value">NVSURL</div>
+                    <div class="status-label">Service</div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                NVSURL URL Shortener • Server Error • <%= new Date().getFullYear() %>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Update timestamp every second
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = 
+                now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        }
+        
+        // Try to get server uptime
+        async function getUptime() {
+            try {
+                const response = await fetch('/health');
+                const result = await response.json();
+                
+                if (result.success && result.data && result.data.uptime) {
+                    document.getElementById('uptime').textContent = result.data.uptime;
+                }
+            } catch (error) {
+                console.log('Could not fetch uptime:', error);
+            }
+        }
+        
+        // Initialize
+        updateTimestamp();
+        getUptime();
+        setInterval(updateTimestamp, 1000);
+        
+        // Try to auto-recover after 30 seconds
+        setTimeout(() => {
+            getUptime();
+        }, 30000);
+    </script>
+</body>
+</html>
