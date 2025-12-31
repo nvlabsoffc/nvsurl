@@ -1,7 +1,7 @@
 {
   "name": "nvsurl",
   "version": "1.0.0",
-  "description": "URL Shortener",
+  "description": "URL Shortener Service",
   "main": "index.js",
   "type": "module",
   "scripts": {
